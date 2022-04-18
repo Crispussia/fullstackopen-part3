@@ -108,6 +108,18 @@ app.delete('/api/persons/:id', (request, response,next) => {
     })
     .catch(error => next(error))
 })
+/*app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+  Person.findByIdAndUpdate(request.params.id, person, { new: true }).then(updatedPerson => {
+    response.json(updatedPerson)
+  }).catch(error => next(error))
+
+})*/
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
@@ -115,10 +127,12 @@ app.put('/api/persons/:id', (request, response, next) => {
     name: body.name,
     number: body.number
   }
-  Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(updatedPerson => {
-    response.json(updatedPerson)
-  }).catch(error => next(error))
 
+  Person.findByIdAndUpdate(request.params.id, person, {runValidators: true, context: 'query', new: true })
+  .then(updatedPerson => {
+    response.json(updatedPerson.toJSON())
+  })
+  .catch(error => next(error))
 })
 /*const generateId = () => {
   const minId = persons.length > 0
