@@ -44,34 +44,33 @@ app.post('/api/persons', (request, response, next) => {
     name: body.name,
     number:body.number
   })
-  persons.save().then(savedPerson => savedPerson.toJSON())
-  .then(person => {
-    response.json(person)
-  })
 
-  /*persons.save().then(savedPerson => {
-    response.json(savedPerson)
-  })*/
-  
-  
-  .catch(error => next(error))
+  persons.save().then(response => {
+    res.json(response)
+  }).catch(error => next(error))
 })
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
   })
- 
+  
+app.get('/info', (request, response) => {
+  Person.countDocuments({}, (error, count) => {
+    if (error) {
+      response.send(error)
+    } else {
+      const phonebookInfo = `Phonebook has info for ${count} people </p>
+                            <p> ${new Date()}</p>`
+      response.send(phonebookInfo)
+    }
+  })
+})
 
 app.get('/api/persons', (request, response,next) => {
-  /*Person.find({}).then(persons => {
-    response.json(persons)
-  })*/
   Person.find({}).then(persons => {
-    response.json(persons.map(person => person.toJSON()))
+    response.json(persons)
   })
   .catch(error => next(error))
-
-
 })
 
 
@@ -95,42 +94,49 @@ app.get('/api/persons/:id', (request, response,next) => {
   .catch(error => next(error))
   
 })
-app.get('/info', (request, response) => {
-  Person.countDocuments({}, (error, count) => {
-    if (error) {
-      response.send(error)
-    } else {
-      const phonebookInfo = `</p>Phonebook has info for ${count} people </p>
-                            <p> ${new Date()}</p>`
-      response.send(phonebookInfo)
-    }
-  })
-})
 
-/*app.delete('/api/persons/:id', (request, response) => {
+
+app.delete('/api/persons/:id', (request, response,next) => {
   
-    const id = Number(request.params.id)
+   /* const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id) 
-    response.status(204).end()
+    response.status(204).end()*/
+
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
 
-  const generateId = () => {
-    const minId = persons.length > 0
-      ? Math.max(...persons.map(n => n.id))
-      : 0
-    const idRandom=Math.floor(Math.random() * (1000 - minId + 1) + minId); 
-    
-      return idRandom
-   
+  const person = {
+    name: body.name,
+    number: body.number
   }
-  
+  Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(updatedPerson => {
+    response.json(updatedPerson)
+  }).catch(error => next(error))
 
-*/
+})
+/*const generateId = () => {
+  const minId = persons.length > 0
+    ? Math.max(...persons.map(n => n.id))
+    : 0
+  const idRandom=Math.floor(Math.random() * (1000 - minId + 1) + minId); 
+  
+    return idRandom
+  
+}
+  */
+
+
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
   }
   
-  app.use(unknownEndpoint)
+app.use(unknownEndpoint)
   const errorHandler = (error, request, response, next) => {
     console.error(error.message)
   
