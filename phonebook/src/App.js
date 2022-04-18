@@ -131,10 +131,12 @@ const deletePerson = (id, name) => {
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
   }
+  const personsToShow = (filter.length === 0) ? persons :
+  persons.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
 
 
-  const personsToShow = persons.filter(person => 
-    person.name.toLowerCase().includes(filter.toLowerCase()))
+ /* const personsToShow = persons.filter(person => 
+    person.name.toLowerCase().includes(filter.toLowerCase()))*/
     
     
     return (
