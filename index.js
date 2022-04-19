@@ -18,13 +18,16 @@ app.use(morgan(':method :url :status  :res[content-length] - :response-time ms :
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  const persons = new Person({
+  
+
+  
+  const person = new Person({
     name: body.name,
     number:body.number
   })
 
-  persons.save().then(response => {
-    res.json(response)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
   }).catch(error => next(error))
 })
 
@@ -95,7 +98,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: body.number
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, {runValidators: true, context: 'query', new: true })
   .then(updatedPerson => {
     response.json(updatedPerson)
   })
@@ -112,7 +115,11 @@ app.use(unknownEndpoint)
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
-    } 
+    }  
+    else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    }
+  
   
     next(error)
   }
