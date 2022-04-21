@@ -86,7 +86,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   }
   Person.findByIdAndUpdate(request.params.id, person, { runValidators: true, context: 'query', new: true })
     .then(updatedPerson => {
-      response.json(updatedPerson)
+      response.json(updatedPerson.toJSON())
     })
     .catch(error => next(error))
 })
