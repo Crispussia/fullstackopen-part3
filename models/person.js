@@ -4,37 +4,37 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 
-mongoose.connect(url)
-  .then(result => {
+mongoose.connect(url,{ useNewUrlParser: true })
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
   })
 
-  const personSchema = new mongoose.Schema({
-    //name: String,
-    //number: String,
-    //id: number,
-    name: {
-      type: String,
-      minlength: 3,
-      required: true,
-      //unique: true
+const personSchema = new mongoose.Schema({
+  //name: String,
+  //number: String,
+  //id: number,
+  name: {
+    type: String,
+    minlength: 3,
+    required: true,
+    //unique: true
+  },
+  number: {
+    type: String,
+    minlength: 8,
+    required: true,
+    validate: {
+      validator: (n) => {
+        return /\d{2}-\d+/.test(n) || /\d{3}-\d+/.test(n)
+        //return /\d{2}-\d{6}/.test(n)
+      },
+      message: props => `${props.value} is not a valid phone number`
     },
-    number: {
-      type: String,
-      minlength: 8,
-      required: true,
-      validate: {
-        validator: (n) => {
-          return /\d{2}-\d+/.test(n) || /\d{3}-\d+/.test(n)
-        },
-        message: props => `${props.value} is not a valid phone number`
-      }
-    }
-  })
-
+  }
+})
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

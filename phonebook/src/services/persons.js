@@ -22,6 +22,6 @@ const deletePerson = id => {
 }
 
 export default { 
-   getAll, create, update,deletePerson
+   getAll, create, update, deletePerson
     
   }
