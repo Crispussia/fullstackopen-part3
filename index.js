@@ -22,7 +22,8 @@ app.post('/api/persons', (request, response, next) => {
   })
   person.save().then(savedPerson => {
     response.json(savedPerson)
-  }).catch(error => next(error))
+  })
+  .catch(error => next(error))
 })
 
 app.get('/', (request, response) => {
@@ -79,7 +80,10 @@ app.delete('/api/persons/:id', (request, response,next) => {
 
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
-  const person ={ name: body.name, number: body.number }
+  const person ={
+    name: body.name,
+    number: body.number
+  }
   Person.findByIdAndUpdate(request.params.id, person, { runValidators: true, context: 'query', new: true })
     .then(updatedPerson => {
       response.json(updatedPerson)
