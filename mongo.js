@@ -1,4 +1,4 @@
-/*const mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
   console.log('Please provide the password as an argument: node mongo.js <password>')
@@ -24,14 +24,14 @@ const person = new Person({
   //id: 456,
 })
 
-person.save().then(result => {
- // console.log('person saved!')
- console.log(`added ${person.name} number ${person.number} to phonebook`)
+person.save().then(() => {
+  // console.log('person saved!')
+  console.log(`added ${person.name} number ${person.number} to phonebook`)
   //mongoose.connection.close()
 })
-Person.find({}).then(result=> {
+Person.find({}).then(result => {
   result.forEach(person => {
     console.log(person)
   })
   mongoose.connection.close()
-})*/
+})

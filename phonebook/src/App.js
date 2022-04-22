@@ -40,36 +40,34 @@ const App = () => {
    const indexPerson = persons.map(person => person.name).indexOf(newName)
    
     if (indexPerson > -1) { 
-      //Recuperation de l'objet de la personne 
+     
       window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
         const indexSamePerson = persons[indexPerson]
-        //const changedPerson = { ...nameObject, id: indexSamePerson.id }
-        
+
         personService
         .update(indexSamePerson.id, nameObject).then(returnedNote => {
           console.log("Prince2", returnedNote)
           setPersons(persons.map(person => person.id !== indexSamePerson.id ? person:{
                 ...nameObject,
                 id: returnedNote.id,
-              }))
-              setSuccessMessage(`Updated ${newName}`);
-             
-              setTimeout(() => {
-                setSuccessMessage(null);
-              }, 5000)
-              setNewName('')
-              setNewNumber('')
+          }))
+          setSuccessMessage(`Updated ${newName}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000)
+          setNewName('')
+          setNewNumber('')
         })
       .catch(error => {    
           setErrorMessage(
-            `Information of ${newName} was already removed from server`
+            `Person validation failed: number: Path number  ${newNumber} is shorter than the minimum allowed length(8)
+            or shall not be in its forms 1234556, 1-22334455 and 10-22-334455`
           )
           setTimeout(() => {
             setErrorMessage(null)
           }, 5000)     
       })
     }else{
-
     
       personService
         .create(nameObject)
@@ -84,13 +82,26 @@ const App = () => {
         setNewNumber('')
     })  
     .catch(error => {
-      setErrorMessage(
-        ` ${error.message}`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)     
-      console.log(error.response.data)
+      if(newName.length<3){
+        setErrorMessage(
+          `Person validation failed: name: Path name  ${newName} is shorter than the minimum allowed length(3)`
+         // ` ${error.message}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)  
+      }else{
+        setErrorMessage(
+          `Person validation failed: number: Path number  ${newNumber} is shorter than the minimum allowed length(8)
+          or shall not be in its forms 1234556, 1-22334455 and 10-22-334455`
+         // ` ${error.message}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)     
+        console.log(error.response.data)
+      }
+      
     }) 
     
   }
@@ -110,8 +121,7 @@ const deletePerson = (id, name) => {
       }, 5000)
      
     })
-    .catch(error => {
-      
+    .catch(error => {     
       setErrorMessage(
         `the person '${name}' was already deleted from server`
       )
@@ -136,24 +146,19 @@ const deletePerson = (id, name) => {
   const personsToShow = (filter.length === 0) ? persons :
   persons.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
 
-
- /* const personsToShow = persons.filter(person => 
-    person.name.toLowerCase().includes(filter.toLowerCase()))*/
-    
-    
-    return (
-      <div>
-        <h2>Phonebook</h2>
-        <SuccessOperation message={successMessage}/>
-         <Notification message={errorMessage}/>
-        <Filter filter={filter} handleFilterChange={handleFilterChange} />
-        <h3>Add a new</h3>
-        <PersonForm addPerson={addPerson}  newName={newName} newNumber={newNumber} 
-          handlePersonChange={handlePersonChange}handleNumberChange={handleNumberChange}/>
-        <h3>Numbers</h3>
-          <Persons persons={personsToShow} removePerson={deletePerson}/>
-      </div>
-    )
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <SuccessOperation message={successMessage}/>
+      <Notification message={errorMessage}/>
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
+      <h3>Add a new</h3>
+      <PersonForm addPerson={addPerson}  newName={newName} newNumber={newNumber} 
+        handlePersonChange={handlePersonChange}handleNumberChange={handleNumberChange}/>
+      <h3>Numbers</h3>
+        <Persons persons={personsToShow} removePerson={deletePerson}/>
+    </div>
+  )
 }
 
 export default App
