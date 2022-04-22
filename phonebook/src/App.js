@@ -33,8 +33,8 @@ const App = () => {
     event.preventDefault()
     const nameObject = {
       name: newName,
-      number: newNumber,
-      id: persons[persons.length - 1].id + 1   
+      number: newNumber
+     // id: persons[persons.length - 1].id + 1   
     }
 
    const indexPerson = persons.map(person => person.name).indexOf(newName)
@@ -43,15 +43,17 @@ const App = () => {
       //Recuperation de l'objet de la personne 
       window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
         const indexSamePerson = persons[indexPerson]
-        const changedPerson = { ...indexSamePerson, id: indexSamePerson.id }
+        //const changedPerson = { ...nameObject, id: indexSamePerson.id }
         
         personService
-        .update(indexSamePerson.id, changedPerson).then(returnedNote => {
+        .update(indexSamePerson.id, nameObject).then(returnedNote => {
+          console.log("Prince2", returnedNote)
           setPersons(persons.map(person => person.id !== indexSamePerson.id ? person:{
                 ...nameObject,
                 id: returnedNote.id,
               }))
               setSuccessMessage(`Updated ${newName}`);
+             
               setTimeout(() => {
                 setSuccessMessage(null);
               }, 5000)
@@ -68,7 +70,7 @@ const App = () => {
       })
     }else{
 
-      
+    
       personService
         .create(nameObject)
         .then(newPerson => {
