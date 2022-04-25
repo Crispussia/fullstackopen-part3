@@ -46,7 +46,7 @@ const App = () => {
 
         personService
         .update(indexSamePerson.id, nameObject).then(returnedNote => {
-          console.log("Prince2", returnedNote)
+          //console.log(returnedNote)
           setPersons(persons.map(person => person.id !== indexSamePerson.id ? person:{
                 ...nameObject,
                 id: returnedNote.id,

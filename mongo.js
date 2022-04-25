@@ -13,7 +13,6 @@ mongoose.connect(url, { useNewUrlParser: true })
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
-  //id: number,
 })
 
 const Person = mongoose.model('Person', personSchema)
@@ -21,7 +20,6 @@ const Person = mongoose.model('Person', personSchema)
 const person = new Person({
   name: process.argv[3],
   number: process.argv[4],
-  //id: 456,
 })
 
 person.save().then(() => {
